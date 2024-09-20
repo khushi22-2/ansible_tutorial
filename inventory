@@ -1,4 +1,4 @@
-xubuntu@192.168.1.6 ansible_python_interpreter=/path/to/myenv/bin/python
-xubuntu@192.168.1.16
-xubuntu@192.168.1.14
+xubuntu@192.168.1.6 ansible_python_interpreter=/usr/bin/python3
+xubuntu@192.168.1.16 ansible_python_interpreter=/usr/bin/python3
+xubuntu@192.168.1.14 ansible_python_interpreter=/usr/bin/python3
 
