@@ -1,0 +1,50 @@
+---
+- name: User Management on Linux Servers
+  hosts: all
+  become: true
+  vars:
+    users:
+      - name: user1
+        groups: sudo
+        shell: /bin/bash
+        password: "{{ 'password123' | password_hash('sha512') }}"
+        ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIONOwGTaPvH2lLslbCnFgeie11Ty9XAdGZ5wIIqkWILJ ansible"
+
+      - name: user2
+        groups: sudo
+        shell: /bin/bash
+        password: "{{ 'password456' | password_hash('sha512') }}"
+        ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIONOwGTaPvH2lLslbCnFgeie11Ty9XAdGZ5wIIqkWILJ ansible"
+
+      - name: user3
+        groups: sudo
+        shell: /bin/bash
+        password: "{{ 'password789' | password_hash('sha512') }}"
+        ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIONOwGTaPvH2lLslbCnFgeie11Ty9XAdGZ5wIIqkWILJ ansible"
+
+  tasks:
+
+    - name: Create users
+      user:
+        name: "{{ item.name }}"
+        shell: "{{ item.shell }}"
+        password: "{{ item.password }}"
+        groups: "{{ item.groups }}"
+        append: yes
+      loop: "{{ users }}"
+
+    - name: Add authorized SSH keys for users
+      authorized_key:
+        user: "{{ item.name }}"
+        key: "{{ item.ssh_key }}"
+        state: present
+      loop: "{{ users }}"
+
+    - name: Ensure sudo privileges for users
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: "^%{{ item.name }} "
+        line: "%{{ item.name }} ALL=(ALL) NOPASSWD:ALL"
+      loop: "{{ users }}"
+
