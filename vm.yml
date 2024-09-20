@@ -1,0 +1,20 @@
+---
+- name: Ensure passlib is installed in virtual environment
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Install python3-venv package (if not present)
+      apt:
+        name: python3-venv
+        state: present
+
+    - name: Create a virtual environment
+      command: python3 -m venv /opt/ansible_venv
+
+    - name: Install passlib in the virtual environment
+      command: /opt/ansible_venv/bin/pip install passlib
+
+    - name: Ensure passlib is installed in the virtual environment
+      shell: "/opt/ansible_venv/bin/python3 -c 'import passlib'"
+
